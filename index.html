@@ -8,7 +8,7 @@
 
         <style>
             body {
-                padding: 0;
+                margin: 0;
             }
 
             canvas {
@@ -28,6 +28,16 @@
         <script>
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
+            const sqRadius = 20;
+
+            const midWidth = canvas.width / 2;
+            const midHeight = canvas.height / 2;
+
+            context.fillRect(midWidth - sqRadius, midHeight - sqRadius, sqRadius, sqRadius);
+
+            function clear() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+            }
         </script>
     </body>
 </html>
