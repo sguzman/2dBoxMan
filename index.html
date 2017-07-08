@@ -30,14 +30,35 @@
             const context = canvas.getContext('2d');
             const sqRadius = 20;
 
-            const midWidth = canvas.width / 2;
-            const midHeight = canvas.height / 2;
+            let pos = [(canvas.width / 2) - sqRadius, (canvas.height / 2) - sqRadius];
+            let speed = [0, 0];
+            const speedUnits = 10.0;
 
-            context.fillRect(midWidth - sqRadius, midHeight - sqRadius, sqRadius, sqRadius);
+            const keydown$ = Rx.Observable.fromEvent(document, 'keydown').map(s => s.keyCode);
+            const top$ = keydown$.filter(s => s === 38).map(s => [0, -speedUnits]);
+            const right$ = keydown$.filter(s => s === 39).map(s => [speedUnits, 0]);
+            const down$ = keydown$.filter(s => s === 40).map(s => [0, speedUnits]);
+            const left$ = keydown$.filter(s => s === 37).map(s => [-speedUnits, 0]);
 
-            function clear() {
+            const cntrl$ = top$.merge(right$).merge(down$).merge(left$);
+
+            const aggre$ = cntrl$.subscribe(s => {
+                speed = [speed[0] + s[0], speed[1] + s[1]];
+                console.log(speed);
+                console.log(pos);
+            });
+
+            const loop = setInterval(() => {
                 context.clearRect(0, 0, canvas.width, canvas.height);
-            }
+                pos = [pos[0] + speed[0], pos[1] + speed[1]];
+
+                context.fillRect(pos[0], pos[1], sqRadius, sqRadius);
+                if (speed[0] > 0) --speed[0];
+                if (speed[1] > 0) --speed[1];
+
+                if (speed[0] < 0) ++speed[0];
+                if (speed[1] < 0) ++speed[1];
+            }, 20);
         </script>
     </body>
 </html>
