@@ -37,24 +37,33 @@
             // Must be a multiple of speedUnits;
             const speedDecelerateUnits = 0.1;
 
+            let colorSquare = 'black';
+            let colorBackgrnd = 'white';
+
             const keydown$ = Rx.Observable.fromEvent(document, 'keydown').map(s => s.keyCode);
             const top$ = keydown$.filter(s => s === 38).map(s => [0, -speedUnits]);
             const right$ = keydown$.filter(s => s === 39).map(s => [speedUnits, 0]);
             const down$ = keydown$.filter(s => s === 40).map(s => [0, speedUnits]);
             const left$ = keydown$.filter(s => s === 37).map(s => [-speedUnits, 0]);
 
+            const click$ = Rx.Observable.fromEvent(document, 'click').subscribe(s => {
+                [colorSquare, colorBackgrnd] = [colorBackgrnd, colorSquare];
+            });
+
             const cntrl$ = top$.merge(right$).merge(down$).merge(left$);
 
             const aggre$ = cntrl$.subscribe(s => {
                 speed = [speed[0] + s[0], speed[1] + s[1]];
-                console.log(speed);
-                console.log(pos);
             });
 
             const loop = setInterval(() => {
                 context.clearRect(0, 0, canvas.width, canvas.height);
                 pos = [pos[0] + speed[0], pos[1] + speed[1]];
 
+                context.fillStyle = colorSquare;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                context.fillStyle = colorBackgrnd;
                 context.fillRect(pos[0], pos[1], sqRadius, sqRadius);
                 if (speed[0] > 0) speed[0] -= speedDecelerateUnits;
                 if (speed[1] > 0) speed[1] -= speedDecelerateUnits;
