@@ -28,11 +28,14 @@
         <script>
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
-            const sqRadius = 20;
+            const sqRadius = 10;
 
             let pos = [(canvas.width / 2) - sqRadius, (canvas.height / 2) - sqRadius];
             let speed = [0, 0];
-            const speedUnits = 10.0;
+            const speedUnits = 1.0;
+
+            // Must be a multiple of speedUnits;
+            const speedDecelerateUnits = 0.1;
 
             const keydown$ = Rx.Observable.fromEvent(document, 'keydown').map(s => s.keyCode);
             const top$ = keydown$.filter(s => s === 38).map(s => [0, -speedUnits]);
@@ -53,11 +56,11 @@
                 pos = [pos[0] + speed[0], pos[1] + speed[1]];
 
                 context.fillRect(pos[0], pos[1], sqRadius, sqRadius);
-                if (speed[0] > 0) --speed[0];
-                if (speed[1] > 0) --speed[1];
+                if (speed[0] > 0) speed[0] -= speedDecelerateUnits;
+                if (speed[1] > 0) speed[1] -= speedDecelerateUnits;
 
-                if (speed[0] < 0) ++speed[0];
-                if (speed[1] < 0) ++speed[1];
+                if (speed[0] < 0) speed[0] += speedDecelerateUnits;
+                if (speed[1] < 0) speed[1] += speedDecelerateUnits;
             }, 20);
         </script>
     </body>
